@@ -22,15 +22,44 @@ void room_control_app_init(void)
 
 void room_control_on_button_press(void)
 {
-    // TODO: Implementar anti-rebote
-    // TODO: Procesar la presion para realizar acciones
-    uart2_send_string("Boton B1: Presionado.\r\n");
+    static uint32_t last_press_tick = 0;
+
+    uint32_t now = systick_get_tick();
+    if (now - last_press_tick < 300) return;  // Anti-rebote: ignora si fue hace <300ms
+
+    last_press_tick = now;
+
+    gpio_write_pin(GPIOA, EXTERNAL_LED_ONOFF_PIN, 1);  // Encender LED externo
+    systick_delay_ms(3000);                            // Esperar 3 segundos (bloqueante)
+    gpio_write_pin(GPIOA, EXTERNAL_LED_ONOFF_PIN, 0);  // Apagar LED
 }
 
 void room_control_on_uart_receive(char received_char)
 {
-    // TODO: Procesar el carácter para realizar acciones
-    // Ejemplo: si recibe 'h' o 'H', encender el LED PWM al 100%.
-    //          si recibe 'l' o 'L', apagar el LED PWM (0%).
-    //          si recibe 't', hacer toggle del LED ON/OFF.
+    switch (received_char) {
+        case 'h':
+        case 'H':
+            uart2_send_string("PWM LED al 100%\r\n");
+            tim3_ch1_pwm_set_duty_cycle(100);
+            break;
+
+        case 'l':
+        case 'L':
+            uart2_send_string("PWM LED apagado\r\n");
+            tim3_ch1_pwm_set_duty_cycle(0);
+            break;
+
+        case 't':
+        case 'T':
+            uart2_send_string("Toggle PWM LED\r\n");
+            static uint8_t estado = 0;
+            estado = !estado;
+            tim3_ch1_pwm_set_duty_cycle(estado ? 100 : 0);
+            break;
+
+        default:
+            uart2_send_string("Comando no reconocido\r\n");
+            break;
+    }
 }
+

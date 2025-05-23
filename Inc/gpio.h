@@ -7,6 +7,10 @@
  */
 #ifndef GPIO_H
 #define GPIO_H
+#define HEARTBEAT_LED_PIN    5
+#define HEARTBEAT_LED_PORT   GPIOA
+#define EXTERNAL_LED_ONOFF_PIN   6
+#define EXTERNAL_LED_PORT        GPIOA
 
 #include <stdint.h>
 

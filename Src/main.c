@@ -29,7 +29,7 @@ void heartbeat_led_toggle(void)
 int main(void)
 {
     // Inicialización de SysTick
-    systick_init_1ms(); // Utiliza SYSCLK_FREQ_HZ (ej. 4MHz) de rcc.h
+        systick_init_1ms(); // Utiliza SYSCLK_FREQ_HZ (ej. 4MHz) de rcc.h
 
     // LED Heartbeat
     gpio_setup_pin(GPIOA, HEARTBEAT_LED_PIN, GPIO_MODE_OUTPUT, 0);
@@ -54,8 +54,24 @@ int main(void)
 
     // Mensaje de bienvenida o estado inicial (puede estar en room_control_app_init o aquí)
     uart2_send_string("\r\nSistema Inicializado. Esperando eventos...\r\n");
+    gpio_setup_pin(GPIOA, HEARTBEAT_LED_PIN, GPIO_MODE_OUTPUT, 0);
+
     while (1) {
         heartbeat_led_toggle();
+        // Apagar el LED externo después de 3 segundos
+static uint32_t led_on_timestamp = 0;
+static uint8_t led_active = 0;
+
+if (gpio_read_pin(EXTERNAL_LED_PORT, EXTERNAL_LED_ONOFF_PIN)) {
+    if (!led_active) {
+        led_on_timestamp = systick_get_tick();
+        led_active = 1;
+    } else if (systick_get_tick() - led_on_timestamp >= 3000) {
+        gpio_write_pin(EXTERNAL_LED_PORT, EXTERNAL_LED_ONOFF_PIN, 0);
+        led_active = 0;
+    }
+}
+
     }
 }
 
