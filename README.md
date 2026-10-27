@@ -1,3 +1,13 @@
+# STM32L476RG | Register-Level Room Control
+
+**Academic coursework** · Embedded C · Register-level peripherals · UART · EXTI · SysTick · PWM
+
+Educational firmware exploring STM32 peripheral control through direct register access, without relying on STM32 HAL for application peripherals. Source and teaching guides cover GPIO, timing, external interrupts, serial communication, and LED PWM. Some examples include blocking delays; this is not a production-hardened system or an independently verified hardware release.
+
+The original Spanish course guide is preserved below.
+
+---
+
 # Taller Práctico: Sistema de Control Básico en C Puro (STM32L476RG)
 
 **Universidad Nacional de Colombia - Sede Manizales**
